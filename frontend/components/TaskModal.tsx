@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface Group {
   id: string;
@@ -18,12 +19,17 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, initialDueDate, taskToEdit }: TaskModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [title, setTitle] = useState("");
   const [groupId, setGroupId] = useState(initialGroupId || "");
   const [dueDate, setDueDate] = useState("");
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -98,12 +104,18 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
   };
 
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-background/80 backdrop-blur-sm animate-in">
-      <div className="w-full max-w-md glass p-8 rounded-3xl premium-shadow border border-border/40">
-        <h2 className="font-outfit text-2xl font-bold mb-6">
+  return createPortal(
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
+      onClick={onClose}
+    >
+      <div 
+        className="w-full max-w-md bg-white dark:bg-background p-8 rounded-3xl premium-shadow border border-border/40 animate-in zoom-in-95 duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="font-outfit text-2xl font-bold mb-6 text-foreground">
           {taskToEdit ? "Modifier la Tâche" : "Nouvelle Tâche"}
         </h2>
         
@@ -116,7 +128,7 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
         <form onSubmit={handleSubmit} className="space-y-6">
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold ml-1">Titre de la tâche</label>
+            <label className="text-sm font-semibold ml-1 text-foreground">Titre de la tâche</label>
             <input
               autoFocus
               type="text"
@@ -124,16 +136,16 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ex: Acheter du pain..."
-              className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all"
+              className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold ml-1">Groupe</label>
+            <label className="text-sm font-semibold ml-1 text-foreground">Groupe</label>
             <select
               value={groupId}
               onChange={(e) => setGroupId(e.target.value)}
-              className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none disabled:opacity-50"
+              className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none disabled:opacity-50 text-foreground"
               disabled={!!initialGroupId && !taskToEdit} // Disable if adding to specific group, but allow if editing
             >
               {groups.map((group) => (
@@ -145,12 +157,12 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold ml-1">Date d'échéance (optionnel)</label>
+            <label className="text-sm font-semibold ml-1 text-foreground">Date d'échéance (optionnel)</label>
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all"
+              className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground"
             />
           </div>
 
@@ -158,20 +170,21 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 h-12 rounded-xl border border-border font-bold hover:bg-accent transition-colors"
+              className="flex-1 h-12 rounded-xl border border-border font-bold hover:bg-accent transition-colors text-foreground"
             >
               Annuler
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 h-12 rounded-xl bg-foreground text-background font-bold premium-shadow disabled:opacity-50"
+              className="flex-1 h-12 rounded-xl bg-[#C1E1C1] text-[#1E3A1A] hover:bg-[#A8D1A8] font-bold premium-shadow disabled:opacity-50 transition-colors"
             >
               {loading ? (taskToEdit ? "Mise à jour..." : "Création...") : (taskToEdit ? "Enregistrer" : "Créer")}
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

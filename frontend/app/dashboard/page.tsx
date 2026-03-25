@@ -76,84 +76,90 @@ export default function DashboardPage() {
           <h1 className="font-outfit text-4xl font-extrabold tracking-tight">
             Mes Groupes
           </h1>
-            <p className="text-muted-foreground mt-2">
-              Organisez vos tâches par catégories.
-            </p>
-          </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="h-12 px-6 rounded-xl bg-foreground text-background font-bold premium-shadow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Nouveau Groupe
-          </button>
+          <p className="text-muted-foreground mt-2">
+            Organisez vos tâches par catégories.
+          </p>
         </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="w-full h-12 px-6 rounded-xl bg-foreground text-background font-bold premium-shadow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Nouveau Groupe
+        </button>
+      </div>
 
-        {groups.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border/60 rounded-3xl bg-card/40">
-            <div className="w-16 h-16 bg-brand/10 text-brand rounded-2xl flex items-center justify-center mb-4">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      {groups.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border/60 rounded-3xl bg-card/40">
+          <div className="w-16 h-16 bg-brand/10 text-brand rounded-2xl flex items-center justify-center mb-4">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-bold">Aucun groupe trouvé</h3>
+          <p className="text-muted-foreground text-center mt-2 max-w-xs">
+            Créez votre premier groupe pour commencer à organiser vos tâches.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {/* Special "All" Group */}
+          <Link
+            href="/dashboard/groups/all"
+            className="group relative p-6 rounded-3xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all animate-in block"
+          >
+            <div
+              className="w-12 h-12 rounded-2xl mb-4 flex items-center justify-center bg-brand/20 text-brand"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold">Aucun groupe trouvé</h3>
-            <p className="text-muted-foreground text-center mt-2 max-w-xs">
-              Créez votre premier groupe pour commencer à organiser vos tâches.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {/* Special "All" Group */}
+            <h3 className="text-xl font-bold mb-1 truncate">Tous</h3>
+            <p className="text-sm text-muted-foreground">Toutes les tâches</p>
+            <div
+              className="absolute top-4 right-4 w-3 h-3 rounded-full bg-brand"
+            />
+          </Link>
+
+          {groups.map((group) => (
             <Link
-              href="/dashboard/groups/all"
+              href={`/dashboard/groups/${group.id}`}
+              key={group.id}
               className="group relative p-6 rounded-3xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all animate-in block"
             >
-              <div 
-                className="w-12 h-12 rounded-2xl mb-4 flex items-center justify-center bg-brand/20 text-brand"
+
+              <div
+                className="w-12 h-12 rounded-2xl mb-4 flex items-center justify-center"
+                style={{ backgroundColor: `${group.color}20`, color: group.color || '#3b82f6' }}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold mb-1 truncate">Tous</h3>
-              <p className="text-sm text-muted-foreground">Toutes les tâches</p>
-              <div 
-                className="absolute top-4 right-4 w-3 h-3 rounded-full bg-brand"
+              <h3 className="text-xl font-bold mb-1 truncate">{group.name}</h3>
+              <p className="text-sm text-muted-foreground">Voir les tâches</p>
+              <div
+                className="absolute top-4 right-4 w-3 h-3 rounded-full"
+                style={{ backgroundColor: group.color || '#3b82f6' }}
               />
             </Link>
-
-            {groups.map((group) => (
-              <Link
-                href={`/dashboard/groups/${group.id}`}
-                key={group.id}
-                className="group relative p-6 rounded-3xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all animate-in block"
-              >
-
-                <div 
-                  className="w-12 h-12 rounded-2xl mb-4 flex items-center justify-center"
-                  style={{ backgroundColor: `${group.color}20`, color: group.color || '#3b82f6' }}
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold mb-1 truncate">{group.name}</h3>
-                <p className="text-sm text-muted-foreground">Voir les tâches</p>
-                <div 
-                  className="absolute top-4 right-4 w-3 h-3 rounded-full"
-                  style={{ backgroundColor: group.color || '#3b82f6' }}
-                />
-              </Link>
-            ))}
-          </div>
-        )}
+          ))}
+        </div>
+      )}
 
       {/* Create Group Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-background/80 backdrop-blur-sm animate-in">
-          <div className="w-full max-w-md glass p-8 rounded-3xl premium-shadow border border-border/40">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-md bg-white dark:bg-background p-8 rounded-3xl premium-shadow border border-border/40"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className="font-outfit text-2xl font-bold mb-6">Nouveau Groupe</h2>
             <form onSubmit={createGroup} className="space-y-6">
               <div className="space-y-2">
@@ -177,9 +183,8 @@ export default function DashboardPage() {
                       key={color}
                       type="button"
                       onClick={() => setNewGroupColor(color)}
-                      className={`w-8 h-8 rounded-full transition-all ${
-                        newGroupColor === color ? "ring-2 ring-foreground ring-offset-2 scale-110" : ""
-                      }`}
+                      className={`w-8 h-8 rounded-full transition-all ${newGroupColor === color ? "ring-2 ring-foreground ring-offset-2 scale-110" : ""
+                        }`}
                       style={{ backgroundColor: color }}
                     />
                   ))}
@@ -196,7 +201,7 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 h-12 rounded-xl bg-foreground text-background font-bold premium-shadow"
+                  className="flex-1 h-12 rounded-xl bg-[#C1E1C1] text-[#1E3A1A] hover:bg-[#A8D1A8] font-bold premium-shadow transition-colors"
                 >
                   Créer
                 </button>

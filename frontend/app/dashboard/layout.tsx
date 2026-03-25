@@ -38,7 +38,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-[#fafafa] dark:bg-background flex flex-col md:flex-row">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-72 h-screen sticky top-0 border-r border-border/40 bg-card/30 glass px-6 py-8">
+      <aside className="hidden md:flex flex-col w-72 h-screen sticky top-0 border-r border-border/40 px-6 py-8 bg-white">
         <div className="flex items-center gap-3 mb-12">
           <img src="/icon.png" alt="Logo" className="w-9 h-9 rounded-xl premium-shadow" />
           <span className="font-outfit text-xl font-bold tracking-tight">To-Do</span>
@@ -52,11 +52,10 @@ export default function DashboardLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-all ${
-                  isActive
-                    ? "bg-brand text-brand-foreground premium-shadow"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-all ${isActive
+                  ? "bg-brand text-brand-foreground premium-shadow"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
               >
                 <Icon className="w-5 h-5" />
                 {item.name}
@@ -81,7 +80,7 @@ export default function DashboardLayout({
       </aside>
 
       {/* Mobile Nav */}
-      <div className="md:hidden sticky top-0 z-50 glass border-b border-border/40 px-6 py-4 flex items-center justify-between">
+      <div className="md:hidden sticky top-0 z-50 bg-white dark:bg-background border-b border-border/40 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src="/icon.png" alt="Logo" className="w-8 h-8 rounded-lg" />
           <span className="font-bold">To-Do</span>
@@ -92,7 +91,7 @@ export default function DashboardLayout({
       </div>
 
       {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-[60] bg-background/98 backdrop-blur-xl px-6 py-4 animate-in slide-in-from-top duration-300">
+        <div className="md:hidden fixed inset-0 z-[60] bg-white dark:bg-background px-6 py-4 animate-in slide-in-from-top duration-300">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <img src="/icon.png" alt="Logo" className="w-8 h-8 rounded-lg" />
@@ -102,7 +101,7 @@ export default function DashboardLayout({
               <X className="w-6 h-6" />
             </button>
           </div>
-          
+
           <nav className="space-y-4">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -112,11 +111,10 @@ export default function DashboardLayout({
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-bold transition-all ${
-                    isActive 
-                      ? "bg-brand text-brand-foreground premium-shadow" 
-                      : "text-muted-foreground hover:bg-muted"
-                  }`}
+                  className={`flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-bold transition-all ${isActive
+                    ? "bg-brand text-brand-foreground premium-shadow"
+                    : "text-muted-foreground hover:bg-muted"
+                    }`}
                 >
                   <Icon className="w-6 h-6" />
                   {item.name}
