@@ -5,9 +5,10 @@ import db from "@/lib/db";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { todoId: string } }
+  { params }: { params: Promise<{ todoId: string }> }
 ) {
   try {
+    const { todoId } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return new NextResponse("Unauthorized", { status: 401 });
 
@@ -15,7 +16,7 @@ export async function PATCH(
     const { isCompleted } = body;
 
     const todo = await db.todo.update({
-      where: { id: params.todoId },
+      where: { id: todoId },
       data: { isCompleted },
     });
 
@@ -28,14 +29,15 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { todoId: string } }
+  { params }: { params: Promise<{ todoId: string }> }
 ) {
   try {
+    const { todoId } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return new NextResponse("Unauthorized", { status: 401 });
 
     await db.todo.delete({
-      where: { id: params.todoId },
+      where: { id: todoId },
     });
 
     return new NextResponse(null, { status: 204 });

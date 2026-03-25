@@ -5,14 +5,15 @@ import db from "@/lib/db";
 
 export async function GET(
   req: Request,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> }
 ) {
   try {
+    const { groupId } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return new NextResponse("Unauthorized", { status: 401 });
 
     const todos = await db.todo.findMany({
-      where: { groupId: params.groupId },
+      where: { groupId },
       orderBy: { createdAt: "desc" },
     });
 
@@ -25,9 +26,10 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> }
 ) {
   try {
+    const { groupId } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return new NextResponse("Unauthorized", { status: 401 });
 
@@ -42,7 +44,7 @@ export async function POST(
     const todo = await db.todo.create({
       data: {
         title,
-        groupId: params.groupId,
+        groupId,
         userId: user.id,
       },
     });
