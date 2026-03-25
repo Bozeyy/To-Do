@@ -39,10 +39,10 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-[#fafafa] dark:bg-background flex flex-col md:flex-row">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-72 h-screen sticky top-0 border-r border-border/40 px-6 py-8 bg-white">
-        <div className="flex items-center gap-3 mb-12">
+        <Link href="/" className="flex items-center gap-3 mb-12 hover:opacity-80 transition-opacity block w-max">
           <img src="/icon.png" alt="Logo" className="w-9 h-9 rounded-xl premium-shadow" />
-          <span className="font-outfit text-xl font-bold tracking-tight">To-Do</span>
-        </div>
+          <span className="font-outfit text-xl font-bold tracking-tight">To-Doux</span>
+        </Link>
 
         <nav className="flex-1 space-y-2">
           {navItems.map((item) => {
@@ -81,10 +81,10 @@ export default function DashboardLayout({
 
       {/* Mobile Nav */}
       <div className="md:hidden sticky top-0 z-50 bg-white dark:bg-background border-b border-border/40 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <img src="/icon.png" alt="Logo" className="w-8 h-8 rounded-lg" />
-          <span className="font-bold">To-Do</span>
-        </div>
+          <span className="font-bold">To-Doux</span>
+        </Link>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2">
           {isMobileMenuOpen ? <X /> : <Menu />}
         </button>
@@ -93,10 +93,10 @@ export default function DashboardLayout({
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-[60] bg-white dark:bg-background px-6 py-4 animate-in slide-in-from-top duration-300">
           <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
+            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <img src="/icon.png" alt="Logo" className="w-8 h-8 rounded-lg" />
-              <span className="font-bold">To-Do</span>
-            </div>
+              <span className="font-bold">To-Doux</span>
+            </Link>
             <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2">
               <X className="w-6 h-6" />
             </button>

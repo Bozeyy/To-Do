@@ -51,7 +51,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 bg-foreground rounded-xl flex items-center justify-center text-background font-bold text-xl premium-shadow">
               ✓
             </div>
-            <span className="font-outfit text-2xl font-bold tracking-tight">To-Do</span>
+            <span className="font-outfit text-2xl font-bold tracking-tight">To-Doux</span>
           </Link>
           <h1 className="font-outfit text-3xl font-extrabold tracking-tight text-center">
             Ravi de vous revoir

@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'To-Do List PWA',
-    short_name: 'To-Do',
-    description: 'A simple and clear To-Do list application.',
+    name: 'To-Doux List PWA',
+    short_name: 'To-Doux',
+    description: 'A simple and clear To-Doux list application.',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',

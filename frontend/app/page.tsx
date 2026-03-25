@@ -8,9 +8,7 @@ import InstallPWA from "@/components/InstallPWA";
 export default async function Home() {
   const session = await getServerSession(authOptions);
 
-  if (session) {
-    redirect("/dashboard");
-  }
+  // Removed auto-redirect to allow users to install the PWA from the home page
   return (
     <div className="flex flex-col min-h-screen">
       {/* Background Decor */}
@@ -21,14 +19,20 @@ export default async function Home() {
 
       <header className="sticky top-0 z-50 w-full glass border-b border-border/40 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <img src="/icon.png" alt="Logo" className="w-9 h-9 rounded-xl premium-shadow" />
-            <span className="font-outfit text-xl font-bold tracking-tight">To-Do</span>
-          </div>
+            <span className="font-outfit text-xl font-bold tracking-tight">To-Doux</span>
+          </Link>
           <nav>
-            <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Se connecter
-            </Link>
+            {session ? (
+              <Link href="/dashboard" className="text-sm font-medium text-foreground hover:text-brand font-bold transition-colors">
+                Aller au Dashboard
+              </Link>
+            ) : (
+              <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                Se connecter
+              </Link>
+            )}
           </nav>
         </div>
       </header>
@@ -51,12 +55,22 @@ export default async function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-8 w-full sm:w-auto">
-            <Link href="/signup" className="h-14 px-8 rounded-full bg-foreground text-background font-bold text-lg premium-shadow hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">
-              Commencer Maintenant
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Link>
+            {session ? (
+              <Link href="/dashboard" className="h-14 px-8 rounded-full bg-foreground text-background font-bold text-lg premium-shadow hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">
+                Aller au Dashboard
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+            ) : (
+              <Link href="/signup" className="h-14 px-8 rounded-full bg-foreground text-background font-bold text-lg premium-shadow hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">
+                Commencer Maintenant
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+            )}
+
             <InstallPWA />
             <button className="h-14 px-8 rounded-full bg-secondary border border-border font-bold text-lg hover:bg-accent transition-colors">
               En savoir plus
@@ -81,7 +95,7 @@ export default async function Home() {
       <footer className="py-12 px-6 border-t border-border/40 mt-auto">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-sm text-muted-foreground">
-            © 2026 To-Do PWA. Fait avec passion.
+            © 2026 To-Doux PWA. Fait avec passion.
           </p>
           <div className="flex gap-8">
             <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Confidentialité</Link>

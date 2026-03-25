@@ -15,12 +15,12 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "To-Do List PWA",
-  description: "Une application To-Do simple, claire et premium.",
+  title: "To-Doux List PWA",
+  description: "Une application To-Doux simple, claire et premium.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "To-Do PWA",
+    title: "To-Doux PWA",
   },
   formatDetection: {
     telephone: false,
