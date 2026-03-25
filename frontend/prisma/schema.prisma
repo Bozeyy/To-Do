@@ -30,14 +30,16 @@ model Group {
 }
 
 model Todo {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String
-  isCompleted Boolean  @default(false) @map("is_completed")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  userId      String   @map("user_id") @db.Uuid
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groupId     String?  @map("group_id") @db.Uuid
-  group       Group?   @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  isCompleted Boolean   @default(false) @map("is_completed")
+  dueDate     DateTime? @map("due_date") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  userId      String    @map("user_id") @db.Uuid
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupId     String?   @map("group_id") @db.Uuid
+  group       Group?    @relation(fields: [groupId], references: [id], onDelete: SetNull)
 
   @@map("todos")
 }
+

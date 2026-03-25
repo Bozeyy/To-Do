@@ -20,10 +20,8 @@ export default async function Home() {
 
       <header className="sticky top-0 z-50 w-full glass border-b border-border/40 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center text-background font-bold">
-              ✓
-            </div>
+          <div className="flex items-center gap-3">
+            <img src="/icon.png" alt="Logo" className="w-9 h-9 rounded-xl premium-shadow" />
             <span className="font-outfit text-xl font-bold tracking-tight">To-Do</span>
           </div>
           <nav>

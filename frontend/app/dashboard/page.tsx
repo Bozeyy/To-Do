@@ -77,9 +77,7 @@ export default function DashboardPage() {
       <nav className="sticky top-0 z-40 w-full glass border-b border-border/40 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-foreground rounded-xl flex items-center justify-center text-background font-bold text-lg premium-shadow">
-              ✓
-            </div>
+            <img src="/icon.png" alt="Logo" className="w-9 h-9 rounded-xl premium-shadow" />
             <span className="font-outfit text-xl font-bold tracking-tight">Dashboard</span>
           </div>
           <div className="flex items-center gap-4">
@@ -131,12 +129,32 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {/* Special "All" Group */}
+            <Link
+              href="/dashboard/groups/all"
+              className="group relative p-6 rounded-3xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all animate-in block"
+            >
+              <div 
+                className="w-12 h-12 rounded-2xl mb-4 flex items-center justify-center bg-brand/20 text-brand"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold mb-1 truncate">Tous</h3>
+              <p className="text-sm text-muted-foreground">Toutes les tâches</p>
+              <div 
+                className="absolute top-4 right-4 w-3 h-3 rounded-full bg-brand"
+              />
+            </Link>
+
             {groups.map((group) => (
               <Link
                 href={`/dashboard/groups/${group.id}`}
                 key={group.id}
                 className="group relative p-6 rounded-3xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all animate-in block"
               >
+
                 <div 
                   className="w-12 h-12 rounded-2xl mb-4 flex items-center justify-center"
                   style={{ backgroundColor: `${group.color}20`, color: group.color || '#3b82f6' }}
