@@ -1,0 +1,94 @@
+import Link from "next/link";
+
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
+import { redirect } from "next/navigation";
+
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+
+  if (session) {
+    redirect("/dashboard");
+  }
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* Background Decor */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-brand/5 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-brand/5 blur-[120px]" />
+      </div>
+
+      <header className="sticky top-0 z-50 w-full glass border-b border-border/40 px-6 py-4">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center text-background font-bold">
+              ✓
+            </div>
+            <span className="font-outfit text-xl font-bold tracking-tight">To-Do</span>
+          </div>
+          <nav>
+            <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              Se connecter
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12 max-w-5xl mx-auto w-full">
+        <div className="animate-in flex flex-col items-center text-center gap-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/10 border border-brand/20 text-brand text-xs font-semibold tracking-wide uppercase">
+            Productivité Maximale
+          </div>
+          
+          <h1 className="font-outfit text-5xl md:text-7xl font-extrabold tracking-tight max-w-4xl">
+            <span className="text-gradient">Simplifiez votre quotidien,</span>
+            <br />
+            <span className="text-muted-foreground">une tâche à la fois.</span>
+          </h1>
+
+          <p className="max-w-2xl text-lg md:text-xl text-muted-foreground leading-relaxed">
+            Une interface intuitive et claire pour gérer vos projets, vos courses ou vos idées. 
+            Installez-la comme une application native sur tous vos appareils.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 mt-8 w-full sm:w-auto">
+            <Link href="/signup" className="h-14 px-8 rounded-full bg-foreground text-background font-bold text-lg premium-shadow hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">
+              Commencer Maintenant
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+            <button className="h-14 px-8 rounded-full bg-secondary border border-border font-bold text-lg hover:bg-accent transition-colors">
+              En savoir plus
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 w-full text-left">
+            {[
+              { title: "Simple", desc: "Une interface épurée sans distractions inutile." },
+              { title: "Partout", desc: "Disponible hors-ligne grâce à la technologie PWA." },
+              { title: "Gratuit", desc: "Toutes les fonctionnalités sont accessibles gratuitement." },
+            ].map((feature, i) => (
+              <div key={i} className="p-6 rounded-2xl border border-border/50 bg-card/50 glass hover:border-brand/30 transition-all group">
+                <h3 className="font-outfit text-xl font-bold mb-2 group-hover:text-brand transition-colors">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+
+      <footer className="py-12 px-6 border-t border-border/40 mt-auto">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="text-sm text-muted-foreground">
+            © 2026 To-Do PWA. Fait avec passion.
+          </p>
+          <div className="flex gap-8">
+            <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Confidentialité</Link>
+            <Link href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Conditions</Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
