@@ -13,10 +13,11 @@ interface TaskModalProps {
   onClose: () => void;
   onSuccess: () => void;
   initialGroupId?: string;
+  initialDueDate?: string;
   taskToEdit?: { id: string; title: string; dueDate: string | null; groupId?: string } | null;
 }
 
-export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, taskToEdit }: TaskModalProps) {
+export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, initialDueDate, taskToEdit }: TaskModalProps) {
   const [title, setTitle] = useState("");
   const [groupId, setGroupId] = useState(initialGroupId || "");
   const [dueDate, setDueDate] = useState("");
@@ -29,10 +30,18 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
       fetchGroups();
       setGroupId(taskToEdit?.groupId || initialGroupId || "");
       setTitle(taskToEdit?.title || "");
-      setDueDate(taskToEdit?.dueDate ? new Date(taskToEdit.dueDate).toISOString().split("T")[0] : "");
+      
+      if (taskToEdit) {
+        setDueDate(taskToEdit.dueDate ? new Date(taskToEdit.dueDate).toISOString().split("T")[0] : "");
+      } else if (initialDueDate) {
+        setDueDate(initialDueDate);
+      } else {
+        setDueDate("");
+      }
+      
       setError(null);
     }
-  }, [isOpen, initialGroupId, taskToEdit]);
+  }, [isOpen, initialGroupId, initialDueDate, taskToEdit]);
 
 
   const fetchGroups = async () => {

@@ -21,12 +21,10 @@ export default function DashboardPage() {
   const [newGroupColor, setNewGroupColor] = useState("#3b82f6");
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    } else if (status === "authenticated") {
+    if (status === "authenticated") {
       fetchGroups();
     }
-  }, [status, router]);
+  }, [status]);
 
   const fetchGroups = async () => {
     try {
@@ -63,43 +61,21 @@ export default function DashboardPage() {
     }
   };
 
-  if (status === "loading" || loading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-brand border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] dark:bg-background">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-40 w-full glass border-b border-border/40 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/icon.png" alt="Logo" className="w-9 h-9 rounded-xl premium-shadow" />
-            <span className="font-outfit text-xl font-bold tracking-tight">Dashboard</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground hidden sm:block">
-              {session?.user?.email}
-            </span>
-            <button
-              onClick={() => signOut()}
-              className="px-4 py-2 rounded-xl border border-border text-sm font-semibold hover:bg-accent transition-colors"
-            >
-              Déconnexion
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto px-6 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-          <div>
-            <h1 className="font-outfit text-4xl font-extrabold tracking-tight">
-              Mes Groupes
-            </h1>
+    <div className="px-6 py-12 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+        <div>
+          <h1 className="font-outfit text-4xl font-extrabold tracking-tight">
+            Mes Groupes
+          </h1>
             <p className="text-muted-foreground mt-2">
               Organisez vos tâches par catégories.
             </p>
@@ -173,7 +149,6 @@ export default function DashboardPage() {
             ))}
           </div>
         )}
-      </main>
 
       {/* Create Group Modal */}
       {isModalOpen && (

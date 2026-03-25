@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import AuthContext from "@/components/AuthContext";
+import SWRegistration from "@/components/SWRegistration";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,7 +17,6 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "To-Do List PWA",
   description: "Une application To-Do simple, claire et premium.",
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -48,6 +48,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans selection:bg-brand/10 selection:text-brand">
         <AuthContext>
+          <SWRegistration />
           {children}
         </AuthContext>
       </body>

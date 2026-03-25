@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
+import InstallPWA from "@/components/InstallPWA";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -56,6 +57,7 @@ export default async function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
+            <InstallPWA />
             <button className="h-14 px-8 rounded-full bg-secondary border border-border font-bold text-lg hover:bg-accent transition-colors">
               En savoir plus
             </button>

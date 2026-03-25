@@ -33,12 +33,10 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
   const [taskToEdit, setTaskToEdit] = useState<Todo | null>(null);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    } else if (status === "authenticated") {
+    if (status === "authenticated") {
       fetchData();
     }
-  }, [status, router, params.groupId]);
+  }, [status, params.groupId]);
 
   // Close menu on click outside
   useEffect(() => {
@@ -115,9 +113,9 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
     setTaskToEdit(null);
   };
 
-  if (status === "loading" || loading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-brand border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -126,32 +124,25 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
   if (!group) return null;
 
   return (
-    <div className="min-h-screen bg-[#fafafa] dark:bg-background">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-40 w-full glass border-b border-border/40 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors group">
-            <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-            </svg>
-            Retour Dashboard
-          </Link>
-          <div className="flex items-center gap-3">
-            <img src="/icon.png" alt="Logo" className="w-8 h-8 rounded-lg premium-shadow" />
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: group.color || "#3b82f6" }} />
-              <span className="font-bold">{group.name}</span>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="mb-6">
+        <Link href="/dashboard" className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors group w-fit">
+          <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+          </svg>
+          Retour aux Groupes
+        </Link>
+      </div>
 
-      <main className="max-w-4xl mx-auto px-6 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-          <div>
-            <h1 className="font-outfit text-4xl font-extrabold tracking-tight">
-              {group.name}
-            </h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: group.color || "#3b82f6" }} />
+            <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Groupe</span>
+          </div>
+          <h1 className="font-outfit text-4xl font-extrabold tracking-tight">
+            {group.name}
+          </h1>
             <p className="text-muted-foreground mt-2">
               {todos.length} {todos.length <= 1 ? "tâche" : "tâches"} dans ce groupe.
             </p>
@@ -289,7 +280,6 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
             ))
           )}
         </div>
-      </main>
 
       <TaskModal
         isOpen={isTaskModalOpen}
