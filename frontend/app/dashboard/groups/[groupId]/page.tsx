@@ -10,6 +10,8 @@ import TaskModal from "@/components/TaskModal";
 interface Todo {
   id: string;
   title: string;
+  description?: string | null;
+  color?: string | null;
   isCompleted: boolean;
   dueDate: string | null;
 }
@@ -205,7 +207,10 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
                 onClick={() => toggleTodo(todo.id, todo.isCompleted)}
                 className="group relative flex items-center justify-between p-4 rounded-2xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all cursor-pointer animate-in"
               >
-                <div className="flex items-center gap-4 flex-1">
+                {todo.color && (
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl" style={{ backgroundColor: todo.color }} />
+                )}
+                <div className={`flex items-center gap-4 flex-1 ${todo.color ? 'ml-2' : ''}`}>
                   <div
                     className={`w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${todo.isCompleted
                       ? "bg-brand border-brand text-white"
@@ -222,6 +227,11 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
                     <span className={`text-lg font-medium transition-all ${todo.isCompleted ? "text-muted-foreground line-through" : ""}`}>
                       {todo.title}
                     </span>
+                    {todo.description && (
+                      <p className={`text-sm mt-0.5 mb-1.5 ${todo.isCompleted ? "text-muted-foreground/60" : "text-muted-foreground"}`}>
+                        {todo.description}
+                      </p>
+                    )}
                     {todo.dueDate && (
                       <span className={`text-xs flex items-center gap-1 ${new Date(todo.dueDate) < new Date() && !todo.isCompleted
                         ? "text-red-500 font-bold"

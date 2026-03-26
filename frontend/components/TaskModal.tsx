@@ -15,12 +15,14 @@ interface TaskModalProps {
   onSuccess: () => void;
   initialGroupId?: string;
   initialDueDate?: string;
-  taskToEdit?: { id: string; title: string; dueDate: string | null; groupId?: string } | null;
+  taskToEdit?: { id: string; title: string; dueDate: string | null; groupId?: string; description?: string | null; color?: string | null } | null;
 }
 
 export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, initialDueDate, taskToEdit }: TaskModalProps) {
   const [mounted, setMounted] = useState(false);
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [color, setColor] = useState("");
   const [groupId, setGroupId] = useState(initialGroupId || "");
   const [dueDate, setDueDate] = useState("");
   const [groups, setGroups] = useState<Group[]>([]);
@@ -36,6 +38,8 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
       fetchGroups();
       setGroupId(taskToEdit?.groupId || initialGroupId || "");
       setTitle(taskToEdit?.title || "");
+      setDescription(taskToEdit?.description || "");
+      setColor(taskToEdit?.color || "");
       
       if (taskToEdit) {
         setDueDate(taskToEdit.dueDate ? new Date(taskToEdit.dueDate).toISOString().split("T")[0] : "");
@@ -83,6 +87,8 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           title, 
+          description: description || null,
+          color: color || null,
           dueDate: dueDate || null,
           ...(taskToEdit && { groupId }) // Support moving task to another group if needed
         }),
@@ -164,6 +170,32 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
               onChange={(e) => setDueDate(e.target.value)}
               className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground"
             />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold ml-1 text-foreground">Description (optionnelle)</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Détails supplémentaires..."
+              className="w-full min-h-[80px] p-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground resize-y"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold ml-1 text-foreground">Couleur (optionnelle)</label>
+            <div className="flex gap-2 flex-wrap">
+              {['#cbd5e1', '#fecaca', '#fde047', '#bbf7d0', '#bfdbfe', '#e9d5ff', '#fbcfe8'].map(c => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setColor(c === color ? "" : c)}
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${color === c ? 'border-brand scale-110 shadow-sm' : 'border-transparent hover:scale-105'}`}
+                  style={{ backgroundColor: c }}
+                  title={`Couleur ${c}`}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="flex gap-3 pt-4">

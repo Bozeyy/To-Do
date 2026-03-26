@@ -24,6 +24,8 @@ interface Todo {
   title: string;
   isCompleted: boolean;
   dueDate: string;
+  description?: string | null;
+  color?: string | null;
   group?: {
     id: string;
     name: string;
@@ -203,9 +205,9 @@ export default function Calendar() {
                   : "premium-shadow hover:scale-[1.02]"
                   }`}
                 style={{
-                  backgroundColor: !todo.isCompleted ? (todo.group?.color ? `${todo.group.color}20` : "var(--color-brand-20)") : undefined,
-                  color: !todo.isCompleted ? (todo.group?.color || "var(--color-brand)") : undefined,
-                  borderLeft: !todo.isCompleted ? `3px solid ${todo.group?.color || "var(--color-brand)"}` : undefined
+                  backgroundColor: !todo.isCompleted ? (todo.color ? `${todo.color}20` : todo.group?.color ? `${todo.group.color}20` : "var(--color-brand-20)") : undefined,
+                  color: !todo.isCompleted ? (todo.color || todo.group?.color || "var(--color-brand)") : undefined,
+                  borderLeft: !todo.isCompleted ? `3px solid ${todo.color || todo.group?.color || "var(--color-brand)"}` : undefined
                 }}
               >
                 {todo.title}
@@ -299,19 +301,26 @@ export default function Calendar() {
                       ? "bg-brand border-brand text-white"
                       : "border-muted-foreground/30 text-transparent group-hover:border-brand/40"
                       }`}
-                    style={!todo.isCompleted && todo.group?.color ? { borderColor: `${todo.group.color}60` } : {}}
+                    style={!todo.isCompleted && (todo.color || todo.group?.color) ? { borderColor: `${todo.color || todo.group?.color}60` } : {}}
                   >
                     <Check strokeWidth={3} className="w-3.5 h-3.5" />
                   </button>
 
                   <div
                     className="w-2 h-2 rounded-full shrink-0"
-                    style={{ backgroundColor: todo.group?.color || "var(--color-brand)" }}
+                    style={{ backgroundColor: todo.color || todo.group?.color || "var(--color-brand)" }}
                   />
 
-                  <span className={`flex-1 font-medium transition-all ${todo.isCompleted ? "line-through text-muted-foreground opacity-60" : ""}`}>
-                    {todo.title}
-                  </span>
+                  <div className={`flex-1 flex flex-col transition-all overflow-hidden ${todo.isCompleted ? "opacity-60" : ""}`}>
+                    <span className={`font-medium ${todo.isCompleted ? "line-through text-muted-foreground" : ""}`}>
+                      {todo.title}
+                    </span>
+                    {todo.description && (
+                      <p className="text-xs text-muted-foreground mt-0.5 max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                        {todo.description}
+                      </p>
+                    )}
+                  </div>
 
                   <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-background text-muted-foreground shrink-0 border border-border/40">
                     {todo.group?.name}

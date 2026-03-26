@@ -13,11 +13,18 @@ export async function PATCH(
     if (!session?.user?.email) return new NextResponse("Unauthorized", { status: 401 });
 
     const body = await req.json();
-    const { isCompleted } = body;
+    const { isCompleted, title, description, color, dueDate } = body;
+
+    const updateData: any = {};
+    if (isCompleted !== undefined) updateData.isCompleted = isCompleted;
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (color !== undefined) updateData.color = color;
+    if (dueDate !== undefined) updateData.dueDate = dueDate ? new Date(dueDate) : null;
 
     const todo = await db.todo.update({
       where: { id: todoId },
-      data: { isCompleted },
+      data: updateData,
     });
 
     return NextResponse.json(todo);

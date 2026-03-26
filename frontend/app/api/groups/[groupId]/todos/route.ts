@@ -57,9 +57,9 @@ export async function POST(
     }
 
     const body = await req.json();
-    const { title, dueDate } = body;
+    const { title, dueDate, description, color } = body;
 
-    console.log("[DEBUG] Request data:", { title, dueDate });
+    console.log("[DEBUG] Request data:", { title, dueDate, description, color });
 
     if (!title) {
       return new NextResponse("Title is required", { status: 400 });
@@ -70,6 +70,8 @@ export async function POST(
       const todo = await db.todo.create({
         data: {
           title,
+          description,
+          color,
           dueDate: dueDate ? new Date(dueDate) : null,
           groupId,
           userId: finalUserId,
