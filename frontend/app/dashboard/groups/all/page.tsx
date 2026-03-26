@@ -228,10 +228,10 @@ export default function AllTasksPage() {
                 onContextMenu={(e) => {
                   if (window.matchMedia("(max-width: 768px)").matches) e.preventDefault();
                 }}
-                className="group relative flex items-center justify-between p-4 rounded-2xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all cursor-pointer animate-in"
+                className="group relative flex items-center justify-between p-4 rounded-2xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all cursor-pointer animate-in overflow-hidden"
               >
                 {todo.color && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl" style={{ backgroundColor: todo.color }} />
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: todo.color }} />
                 )}
                 <div className={`flex items-center gap-4 flex-1 ${todo.color ? 'ml-2' : ''}`}>
                   <div

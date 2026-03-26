@@ -60,9 +60,25 @@ export async function GET() {
     const groups = await db.group.findMany({
       where: { userId: user.id },
       orderBy: { name: "asc" },
+      include: {
+        _count: {
+          select: {
+            todos: {
+              where: { isCompleted: false },
+            },
+          },
+        },
+      },
     });
 
-    return NextResponse.json(groups);
+    const totalTasks = await db.todo.count({
+      where: {
+        userId: user.id,
+        isCompleted: false,
+      },
+    });
+
+    return NextResponse.json({ groups, totalTasks });
   } catch (error) {
     console.error("[GROUPS_GET]", error);
     return new NextResponse("Internal Error", { status: 500 });

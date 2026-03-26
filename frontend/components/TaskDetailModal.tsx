@@ -39,13 +39,13 @@ export default function TaskDetailModal({ isOpen, onClose, todo }: TaskDetailMod
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-md bg-white dark:bg-background p-8 rounded-[2rem] premium-shadow border border-border/40 animate-in zoom-in-95 duration-300"
+        className="relative w-full max-w-md bg-white dark:bg-background p-8 rounded-[2rem] premium-shadow border border-border/40 animate-in zoom-in-95 duration-300 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Banner with Task Color */}
         {todo.color && (
           <div 
-            className="absolute top-0 left-0 right-0 h-4 rounded-t-[2rem]"
+            className="absolute top-0 left-0 right-0 h-4"
             style={{ backgroundColor: todo.color }}
           />
         )}

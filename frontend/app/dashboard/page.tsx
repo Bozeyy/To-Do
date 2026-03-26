@@ -9,12 +9,16 @@ interface Group {
   id: string;
   name: string;
   color: string | null;
+  _count?: {
+    todos: number;
+  };
 }
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [groups, setGroups] = useState<Group[]>([]);
+  const [totalTasks, setTotalTasks] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
@@ -31,7 +35,12 @@ export default function DashboardPage() {
       const res = await fetch("/api/groups");
       if (res.ok) {
         const data = await res.json();
-        setGroups(data);
+        if (data.groups) {
+          setGroups(data.groups);
+          setTotalTasks(data.totalTasks || 0);
+        } else {
+          setGroups(data);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -73,8 +82,13 @@ export default function DashboardPage() {
     <div className="px-6 py-12 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
         <div>
-          <h1 className="font-outfit text-4xl font-extrabold tracking-tight">
+          <h1 className="font-outfit text-4xl font-extrabold tracking-tight flex items-center gap-3">
             Mes Groupes
+            {totalTasks > 0 && (
+              <span className="bg-red-500 text-white text-lg min-w-[2.5rem] h-10 flex items-center justify-center rounded-full font-bold premium-shadow px-2">
+                {totalTasks}
+              </span>
+            )}
           </h1>
           <p className="text-muted-foreground mt-2">
             Organisez vos tâches par catégories.
@@ -119,9 +133,15 @@ export default function DashboardPage() {
             </div>
             <h3 className="text-xl font-bold mb-1 truncate">Tous</h3>
             <p className="text-sm text-muted-foreground">Toutes les tâches</p>
-            <div
-              className="absolute top-4 right-4 w-3 h-3 rounded-full bg-brand"
-            />
+            {totalTasks > 0 ? (
+              <div className="absolute top-4 right-4 bg-red-500 text-white text-[10px] w-6 h-6 flex items-center justify-center rounded-full font-bold premium-shadow">
+                {totalTasks}
+              </div>
+            ) : (
+              <div
+                className="absolute top-4 right-4 w-3 h-3 rounded-full bg-brand"
+              />
+            )}
           </Link>
 
           {groups.map((group) => (
@@ -141,10 +161,16 @@ export default function DashboardPage() {
               </div>
               <h3 className="text-xl font-bold mb-1 truncate">{group.name}</h3>
               <p className="text-sm text-muted-foreground">Voir les tâches</p>
-              <div
-                className="absolute top-4 right-4 w-3 h-3 rounded-full"
-                style={{ backgroundColor: group.color || '#3b82f6' }}
-              />
+              {group._count && group._count.todos > 0 ? (
+                <div className="absolute top-4 right-4 bg-red-500 text-white text-[10px] w-6 h-6 flex items-center justify-center rounded-full font-bold premium-shadow">
+                  {group._count.todos}
+                </div>
+              ) : (
+                <div
+                  className="absolute top-4 right-4 w-3 h-3 rounded-full"
+                  style={{ backgroundColor: group.color || '#3b82f6' }}
+                />
+              )}
             </Link>
           ))}
         </div>
