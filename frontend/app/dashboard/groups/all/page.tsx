@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import TaskModal from "@/components/TaskModal";
+import TaskDetailModal from "@/components/TaskDetailModal";
 
 interface Todo {
   id: string;
@@ -29,6 +30,33 @@ export default function AllTasksPage() {
   const [activeTab, setActiveTab] = useState<"todo" | "done">("todo");
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [taskToEdit, setTaskToEdit] = useState<Todo | null>(null);
+  const [taskToView, setTaskToView] = useState<Todo | null>(null);
+
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const isLongPress = useRef(false);
+
+  const handleTouchStart = (todo: Todo) => {
+    isLongPress.current = false;
+    longPressTimer.current = setTimeout(() => {
+      isLongPress.current = true;
+      setTaskToView({
+        ...todo,
+        group: todo.group ? { id: todo.group.id, name: todo.group.name, color: todo.group.color } : null
+      });
+    }, 500);
+  };
+
+  const handleTouchEndOrMove = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleTaskClick = (todo: Todo) => {
+    if (isLongPress.current) return;
+    toggleTodo(todo.id, todo.isCompleted);
+  };
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -193,7 +221,13 @@ export default function AllTasksPage() {
             sortedAndFilteredTodos.map((todo) => (
               <div
                 key={todo.id}
-                onClick={() => toggleTodo(todo.id, todo.isCompleted)}
+                onClick={() => handleTaskClick(todo)}
+                onTouchStart={() => handleTouchStart(todo)}
+                onTouchEnd={handleTouchEndOrMove}
+                onTouchMove={handleTouchEndOrMove}
+                onContextMenu={(e) => {
+                  if (window.matchMedia("(max-width: 768px)").matches) e.preventDefault();
+                }}
                 className="group relative flex items-center justify-between p-4 rounded-2xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all cursor-pointer animate-in"
               >
                 {todo.color && (
@@ -300,6 +334,12 @@ export default function AllTasksPage() {
         onClose={handleCloseModal}
         onSuccess={fetchTodos}
         taskToEdit={taskToEdit}
+      />
+
+      <TaskDetailModal
+        isOpen={!!taskToView}
+        onClose={() => setTaskToView(null)}
+        todo={taskToView}
       />
     </div>
   );

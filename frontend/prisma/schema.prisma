@@ -12,10 +12,23 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  groups    Group[]
-  todos     Todo[]
+  groups           Group[]
+  todos            Todo[]
+  pushSubscriptions PushSubscription[]
 
   @@map("users")
+}
+
+model PushSubscription {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("push_subscriptions")
 }
 
 model Group {
@@ -32,10 +45,11 @@ model Group {
 model Todo {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String
-  description String?
-  color       String?
-  isCompleted Boolean   @default(false) @map("is_completed")
-  dueDate     DateTime? @map("due_date") @db.Timestamptz(6)
+  description         String?
+  color               String?
+  isCompleted         Boolean   @default(false) @map("is_completed")
+  notifiedReminder24h Boolean   @default(false) @map("notified_reminder_24h")
+  dueDate             DateTime? @map("due_date") @db.Timestamptz(6)
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   userId      String    @map("user_id") @db.Uuid
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)

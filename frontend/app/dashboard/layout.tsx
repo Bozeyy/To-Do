@@ -4,6 +4,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { LayoutGrid, Calendar as CalendarIcon, LogOut, Menu, X } from "lucide-react";
+import NotificationManager from "@/components/NotificationManager";
 import { useState, useEffect } from "react";
 
 export default function DashboardLayout({
@@ -137,10 +138,10 @@ export default function DashboardLayout({
         </div>
       )}
 
-      {/* Main Content */}
       <main className="flex-1 min-w-0">
         {children}
       </main>
+      <NotificationManager />
     </div>
   );
 }

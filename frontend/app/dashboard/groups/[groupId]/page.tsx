@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import TaskModal from "@/components/TaskModal";
+import TaskDetailModal from "@/components/TaskDetailModal";
 
 
 interface Todo {
@@ -14,6 +15,11 @@ interface Todo {
   color?: string | null;
   isCompleted: boolean;
   dueDate: string | null;
+  group?: {
+    id: string;
+    name: string;
+    color: string | null;
+  } | null;
 }
 
 interface Group {
@@ -33,6 +39,33 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
   const [activeTab, setActiveTab] = useState<"todo" | "done">("todo");
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [taskToEdit, setTaskToEdit] = useState<Todo | null>(null);
+  const [taskToView, setTaskToView] = useState<Todo | null>(null);
+
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const isLongPress = useRef(false);
+
+  const handleTouchStart = (todo: Todo) => {
+    isLongPress.current = false;
+    longPressTimer.current = setTimeout(() => {
+      isLongPress.current = true;
+      setTaskToView({
+        ...todo,
+        group: group ? { id: group.id, name: group.name, color: group.color } : null
+      });
+    }, 500);
+  };
+
+  const handleTouchEndOrMove = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleTaskClick = (todo: Todo) => {
+    if (isLongPress.current) return;
+    toggleTodo(todo.id, todo.isCompleted);
+  };
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -204,7 +237,13 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
             sortedAndFilteredTodos.map((todo) => (
               <div
                 key={todo.id}
-                onClick={() => toggleTodo(todo.id, todo.isCompleted)}
+                onClick={() => handleTaskClick(todo)}
+                onTouchStart={() => handleTouchStart(todo)}
+                onTouchEnd={handleTouchEndOrMove}
+                onTouchMove={handleTouchEndOrMove}
+                onContextMenu={(e) => {
+                  if (window.matchMedia("(max-width: 768px)").matches) e.preventDefault();
+                }}
                 className="group relative flex items-center justify-between p-4 rounded-2xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all cursor-pointer animate-in"
               >
                 {todo.color && (
@@ -301,6 +340,12 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
           onSuccess={fetchData}
           initialGroupId={params.groupId}
           taskToEdit={taskToEdit}
+        />
+
+        <TaskDetailModal
+          isOpen={!!taskToView}
+          onClose={() => setTaskToView(null)}
+          todo={taskToView}
         />
       </main>
     </div>
