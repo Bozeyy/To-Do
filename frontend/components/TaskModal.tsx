@@ -59,9 +59,10 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
       const res = await fetch("/api/groups");
       if (res.ok) {
         const data = await res.json();
-        setGroups(data);
-        if (!initialGroupId && !taskToEdit && data.length > 0) {
-          setGroupId(data[0].id);
+        const groupsArray = data.groups || data;
+        setGroups(groupsArray);
+        if (!initialGroupId && !taskToEdit && groupsArray.length > 0) {
+          setGroupId(groupsArray[0].id);
         }
       }
     } catch (err) {
