@@ -35,11 +35,11 @@ export default function TaskDetailModal({ isOpen, onClose, todo }: TaskDetailMod
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
+      className="modal-overlay fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-md bg-white dark:bg-background p-8 rounded-[2rem] premium-shadow border border-border/40 animate-in zoom-in-95 duration-300 overflow-hidden"
+        className="modal-container relative w-full max-w-md bg-white dark:bg-background p-8 rounded-[2rem] premium-shadow border border-border/40 animate-in zoom-in-95 duration-300 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Banner with Task Color */}
@@ -57,8 +57,8 @@ export default function TaskDetailModal({ isOpen, onClose, todo }: TaskDetailMod
           <X className="w-5 h-5" />
         </button>
 
-        <div className={`mt-${todo.color ? '6' : '0'}`}>
-          <div className="flex items-center gap-3 mb-4">
+        <div className={`task-detail-content mt-${todo.color ? '6' : '0'}`}>
+          <div className="task-detail-header flex items-center gap-3 mb-4">
             <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${todo.isCompleted ? 'bg-brand border-brand text-white' : 'border-border text-transparent'}`}>
               <CheckCircle2 strokeWidth={3} className="w-5 h-5" />
             </div>
@@ -86,7 +86,7 @@ export default function TaskDetailModal({ isOpen, onClose, todo }: TaskDetailMod
               : "Aucune date d'échéance"}
           </div>
 
-          <div className="space-y-3">
+          <div className="task-detail-body space-y-3">
             <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground/80">Description</h3>
             {todo.description ? (
               <div className="p-4 bg-muted/30 rounded-2xl border border-border/40 text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap">

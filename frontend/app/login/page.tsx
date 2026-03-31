@@ -1,16 +1,25 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function LoginPage({ params, searchParams }: { params: Promise<any>, searchParams: Promise<any> }) {
+  // Use use() to consume the promises (required in Next.js 15/16)
+  const resolvedParams = use(params);
+  const resolvedSearchParams = use(searchParams);
+  
+  const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +57,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md animate-in">
         <div className="flex flex-col items-center mb-8">
           <Link href="/" className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-foreground rounded-xl flex items-center justify-center text-background font-bold text-xl premium-shadow">
+            <div 
+              suppressHydrationWarning
+              className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center text-brand-foreground font-bold text-xl premium-shadow"
+            >
               ✓
             </div>
             <span className="font-outfit text-2xl font-bold tracking-tight">To-Doux</span>
@@ -73,10 +85,13 @@ export default function LoginPage() {
               <label className="text-sm font-semibold ml-1">Email</label>
               <input
                 type="email"
+                name="email"
                 required
+                suppressHydrationWarning
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nom@exemple.com"
+                autoComplete="username"
                 className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all"
               />
             </div>
@@ -90,18 +105,22 @@ export default function LoginPage() {
               </div>
               <input
                 type="password"
+                name="password"
                 required
+                suppressHydrationWarning
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
+                autoComplete="current-password"
                 className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all"
               />
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full h-12 rounded-xl bg-foreground text-background font-bold premium-shadow hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center"
+              disabled={loading || !mounted}
+              suppressHydrationWarning
+              className="w-full h-12 rounded-xl bg-brand text-brand-foreground font-bold premium-shadow hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />

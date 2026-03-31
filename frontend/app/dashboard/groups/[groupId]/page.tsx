@@ -160,10 +160,10 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
   if (!group) return null;
 
   return (
-    <div className="min-h-screen bg-[#fafafa] dark:bg-background">
+    <div className="page-container min-h-screen bg-[#fafafa] dark:bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-40 w-full glass border-b border-border/40 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+      <nav className="navbar sticky top-0 z-40 w-full glass border-b border-border/40 px-6 py-4">
+        <div className="navbar-content max-w-4xl mx-auto flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors group">
             <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -177,8 +177,8 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-6 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+      <main className="main-content max-w-4xl mx-auto px-6 py-12">
+        <div className="section-header flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: group.color || "#3b82f6" }} />
@@ -193,7 +193,7 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
           </div>
           <button
             onClick={() => setIsTaskModalOpen(true)}
-            className="w-full h-12 px-6 rounded-xl bg-foreground text-background font-bold premium-shadow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+            className="w-full h-12 px-6 rounded-xl bg-brand text-brand-foreground font-bold premium-shadow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -203,7 +203,7 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
         </div>
 
         {/* Filters Switch */}
-        <div className="flex p-1 bg-muted/30 rounded-2xl w-full mb-8 border border-border/40">
+        <div className="tab-nav flex p-1 bg-muted/30 rounded-2xl w-full mb-8 border border-border/40">
           <button
             onClick={() => setActiveTab("todo")}
             className={`flex-1 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${activeTab === "todo"
@@ -225,7 +225,7 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
         </div>
 
         {/* Todo List */}
-        <div className="space-y-4">
+        <div className="task-list space-y-4">
           {sortedAndFilteredTodos.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border/60 rounded-3xl bg-card/40">
               <p className="text-muted-foreground text-center">
@@ -236,23 +236,23 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
             </div>
           ) : (
             sortedAndFilteredTodos.map((todo) => (
-              <div
-                key={todo.id}
-                onClick={() => handleTaskClick(todo)}
-                onTouchStart={() => handleTouchStart(todo)}
-                onTouchEnd={handleTouchEndOrMove}
-                onTouchMove={handleTouchEndOrMove}
-                onContextMenu={(e) => {
-                  if (window.matchMedia("(max-width: 768px)").matches) e.preventDefault();
-                }}
-                className="group relative flex items-center justify-between p-4 rounded-2xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all cursor-pointer animate-in overflow-hidden"
-              >
+                <div
+                  key={todo.id}
+                  onClick={() => handleTaskClick(todo)}
+                  onTouchStart={() => handleTouchStart(todo)}
+                  onTouchEnd={handleTouchEndOrMove}
+                  onTouchMove={handleTouchEndOrMove}
+                  onContextMenu={(e) => {
+                    if (window.matchMedia("(max-width: 768px)").matches) e.preventDefault();
+                  }}
+                  className="task-item group relative flex items-center justify-between p-4 rounded-2xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all cursor-pointer animate-in"
+                >
                 {todo.color && (
                   <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: todo.color }} />
                 )}
                 <div className={`flex items-center gap-4 flex-1 ${todo.color ? 'ml-2' : ''}`}>
                   <div
-                    className={`w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${todo.isCompleted
+                    className={`w-7 h-7 shrink-0 aspect-square rounded-full border-2 flex items-center justify-center transition-all ${todo.isCompleted
                       ? "bg-brand border-brand text-white"
                       : "border-border"
                       }`}
@@ -286,7 +286,7 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
                   </div>
                 </div>
 
-                <div className="relative">
+                <div className={`relative ${openMenuId === todo.id ? "z-50" : "z-0"}`}>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -300,14 +300,14 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
                   </button>
 
                   {openMenuId === todo.id && (
-                    <div className="absolute right-0 mt-2 w-40 bg-card border border-border rounded-xl shadow-xl z-10 py-1 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                    <div className="absolute right-0 mt-2 w-40 bg-white border border-border rounded-xl shadow-xl z-50 py-1 overflow-hidden">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleEdit(todo);
                           setOpenMenuId(null);
                         }}
-                        className="w-full px-4 py-2 text-left text-sm font-medium hover:bg-muted transition-colors flex items-center gap-2"
+                        className="w-full px-4 py-2 text-left text-sm font-medium text-zinc-900 hover:bg-zinc-100 transition-colors flex items-center gap-2"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -320,7 +320,7 @@ export default function GroupPage({ params: paramsPromise }: { params: Promise<{
                           deleteTodo(todo.id);
                           setOpenMenuId(null);
                         }}
-                        className="w-full px-4 py-2 text-left text-sm font-medium text-red-700 hover:bg-red-50 transition-colors flex items-center gap-2"
+                        className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

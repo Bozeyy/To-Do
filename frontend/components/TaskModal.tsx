@@ -115,11 +115,11 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
+      className="modal-overlay fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-md bg-white dark:bg-background p-8 rounded-3xl premium-shadow border border-border/40 animate-in zoom-in-95 duration-300"
+        className="modal-container w-full max-w-md bg-white dark:bg-background p-8 rounded-3xl premium-shadow border border-border/40 animate-in zoom-in-95 duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="font-outfit text-2xl font-bold mb-6 text-foreground">
@@ -132,9 +132,9 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="form-container space-y-6">
 
-          <div className="space-y-2">
+          <div className="form-field space-y-2">
             <label className="text-sm font-semibold ml-1 text-foreground">Titre de la tâche</label>
             <input
               autoFocus
@@ -143,16 +143,16 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ex: Acheter du pain..."
-              className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground"
+              className="input-field w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground"
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="form-field space-y-2">
             <label className="text-sm font-semibold ml-1 text-foreground">Groupe</label>
             <select
               value={groupId}
               onChange={(e) => setGroupId(e.target.value)}
-              className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none disabled:opacity-50 text-foreground"
+              className="input-field w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none disabled:opacity-50 text-foreground"
               disabled={!!initialGroupId && !taskToEdit} // Disable if adding to specific group, but allow if editing
             >
               {groups.map((group) => (
@@ -163,27 +163,27 @@ export default function TaskModal({ isOpen, onClose, onSuccess, initialGroupId, 
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div className="form-field space-y-2">
             <label className="text-sm font-semibold ml-1 text-foreground">Date d'échéance (optionnel)</label>
             <input
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground"
+              className="input-field w-full h-12 px-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground"
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="form-field space-y-2">
             <label className="text-sm font-semibold ml-1 text-foreground">Description (optionnelle)</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Détails supplémentaires..."
-              className="w-full min-h-[80px] p-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground resize-y"
+              className="input-field w-full min-h-[80px] p-4 rounded-xl bg-background border border-border focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all text-foreground resize-y"
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="form-field space-y-2">
             <label className="text-sm font-semibold ml-1 text-foreground">Couleur (optionnelle)</label>
             <div className="flex gap-2 flex-wrap">
               {['#cbd5e1', '#fecaca', '#fde047', '#bbf7d0', '#bfdbfe', '#e9d5ff', '#fbcfe8'].map(c => (

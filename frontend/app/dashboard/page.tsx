@@ -79,8 +79,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="px-6 py-12 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+    <div className="dashboard-container px-6 py-12 max-w-7xl mx-auto">
+      <div className="section-header flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
         <div>
           <h1 className="font-outfit text-4xl font-extrabold tracking-tight flex items-center gap-3">
             Mes Groupes
@@ -96,7 +96,7 @@ export default function DashboardPage() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="w-full h-12 px-6 rounded-xl bg-foreground text-background font-bold premium-shadow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+          className="w-full h-12 px-6 rounded-xl bg-brand text-brand-foreground font-bold premium-shadow hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -118,11 +118,11 @@ export default function DashboardPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="group-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {/* Special "All" Group */}
           <Link
             href="/dashboard/groups/all"
-            className="group relative p-6 rounded-3xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all animate-in block"
+            className="group-card group relative p-6 rounded-3xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all animate-in block"
           >
             <div
               className="w-12 h-12 rounded-2xl mb-4 flex items-center justify-center bg-brand/20 text-brand"
@@ -148,7 +148,7 @@ export default function DashboardPage() {
             <Link
               href={`/dashboard/groups/${group.id}`}
               key={group.id}
-              className="group relative p-6 rounded-3xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all animate-in block"
+              className="group-card group relative p-6 rounded-3xl bg-card border border-border/50 premium-shadow hover:border-brand/40 transition-all animate-in block"
             >
 
               <div
@@ -179,11 +179,11 @@ export default function DashboardPage() {
       {/* Create Group Modal */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in"
+          className="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md animate-in"
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="w-full max-w-md bg-white dark:bg-background p-8 rounded-3xl premium-shadow border border-border/40"
+            className="modal-container w-full max-w-md bg-white dark:bg-background p-8 rounded-3xl premium-shadow border border-border/40"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="font-outfit text-2xl font-bold mb-6">Nouveau Groupe</h2>

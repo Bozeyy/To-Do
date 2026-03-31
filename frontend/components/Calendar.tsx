@@ -6,6 +6,8 @@ import {
   format,
   addMonths,
   subMonths,
+  addWeeks,
+  subWeeks,
   startOfMonth,
   endOfMonth,
   startOfWeek,
@@ -43,6 +45,7 @@ export default function Calendar() {
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"todo" | "done">("todo");
+  const [viewMode, setViewMode] = useState<"month" | "week">("month");
 
   useEffect(() => {
     setMounted(true);
@@ -104,27 +107,75 @@ export default function Calendar() {
     }
   };
 
-  const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
-  const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+  const nextRange = () => {
+    if (viewMode === "month") {
+      setCurrentMonth(addMonths(currentMonth, 1));
+    } else {
+      setCurrentMonth(addWeeks(currentMonth, 1));
+    }
+  };
+
+  const prevRange = () => {
+    if (viewMode === "month") {
+      setCurrentMonth(subMonths(currentMonth, 1));
+    } else {
+      setCurrentMonth(subWeeks(currentMonth, 1));
+    }
+  };
 
   const renderHeader = () => {
+    let title = "";
+    if (viewMode === "month") {
+      title = format(currentMonth, "MMMM yyyy", { locale: fr });
+    } else {
+      const start = startOfWeek(currentMonth, { weekStartsOn: 1 });
+      const end = endOfWeek(currentMonth, { weekStartsOn: 1 });
+      if (isSameMonth(start, end)) {
+        title = `${format(start, "d")} - ${format(end, "d")} ${format(start, "MMMM yyyy", { locale: fr })}`;
+      } else {
+        title = `${format(start, "d MMM")} - ${format(end, "d MMM yyyy", { locale: fr })}`;
+      }
+    }
+
     return (
-      <div className="flex items-center justify-between mb-4 md:mb-8">
-        <h2 className="font-outfit text-xl md:text-3xl font-extrabold tracking-tight capitalize">
-          {format(currentMonth, "MMMM yyyy", { locale: fr })}
-        </h2>
-        <div className="flex gap-2">
+      <div className="calendar-header flex flex-col md:flex-row items-center justify-between gap-6 mb-6 md:mb-10">
+        <div className="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
+          <h2 className="font-outfit text-2xl md:text-3xl font-extrabold tracking-tight capitalize text-center md:text-left min-w-[200px]">
+            {title}
+          </h2>
+          <div className="flex p-1 bg-muted/40 rounded-xl border border-border/40">
+            <button
+              onClick={() => setViewMode("month")}
+              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === "month" ? "bg-white dark:bg-background premium-shadow text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Mois
+            </button>
+            <button
+              onClick={() => setViewMode("week")}
+              className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === "week" ? "bg-white dark:bg-background premium-shadow text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Semaine
+            </button>
+          </div>
+        </div>
+        <div className="flex gap-3">
           <button
-            onClick={prevMonth}
-            className="p-2 rounded-xl border border-border hover:bg-muted transition-colors"
+            onClick={prevRange}
+            className="p-3 rounded-2xl border border-border hover:bg-muted transition-all active:scale-95"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-6 h-6" />
           </button>
           <button
-            onClick={nextMonth}
-            className="p-2 rounded-xl border border-border hover:bg-muted transition-colors"
+            onClick={() => setCurrentMonth(new Date())}
+            className="px-4 py-3 rounded-2xl border border-border hover:bg-muted font-bold text-sm transition-all active:scale-95"
           >
-            <ChevronRight className="w-5 h-5" />
+            Aujourd'hui
+          </button>
+          <button
+            onClick={nextRange}
+            className="p-3 rounded-2xl border border-border hover:bg-muted transition-all active:scale-95"
+          >
+            <ChevronRight className="w-6 h-6" />
           </button>
         </div>
       </div>
@@ -142,7 +193,7 @@ export default function Calendar() {
       { full: "Dim", short: "D" },
     ];
     return (
-      <div className="grid grid-cols-7 mb-4">
+      <div className="calendar-days-grid grid grid-cols-7 mb-4">
         {days.map((day) => (
           <div key={day.full} className="text-center text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wider">
             <span className="hidden md:inline">{day.full}</span>
@@ -156,8 +207,15 @@ export default function Calendar() {
   const renderCells = () => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(monthStart);
-    const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
-    const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+    
+    let startDate, endDate;
+    if (viewMode === "month") {
+      startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
+      endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+    } else {
+      startDate = startOfWeek(currentMonth, { weekStartsOn: 1 });
+      endDate = endOfWeek(currentMonth, { weekStartsOn: 1 });
+    }
 
     const calendarDays = eachDayOfInterval({ start: startDate, end: endDate });
 
@@ -166,19 +224,20 @@ export default function Calendar() {
 
     calendarDays.forEach((day, i) => {
       const dayTodos = todos.filter((todo) => isSameDay(new Date(todo.dueDate), day));
+      const isCurrentMonth = isSameMonth(day, monthStart);
+      const isSelected = selectedDay && isSameDay(day, selectedDay);
+      const isToday = isSameDay(day, new Date());
 
       days.push(
         <div
           key={day.toString()}
-          onClick={() => {
-            setSelectedDay(day);
-          }}
-          className={`min-h-[80px] md:min-h-[120px] p-1 md:p-2 border border-border/40 transition-all cursor-pointer group hover:bg-muted/30 ${!isSameMonth(day, monthStart) ? "opacity-30" : ""
-            } ${isSameDay(day, new Date()) ? "bg-brand/5 border-brand/20" : "bg-card/50"} ${selectedDay && isSameDay(day, selectedDay) ? "ring-2 ring-brand ring-inset" : ""
-            }`}
+          onClick={() => setSelectedDay(day)}
+          className={`calendar-day-cell relative min-h-[100px] md:min-h-[140px] p-2 md:p-3 border border-border/40 transition-all cursor-pointer group hover:bg-muted/30 flex flex-col ${
+            viewMode === "month" && !isCurrentMonth ? "opacity-30 bg-muted/5 font-normal" : "bg-card/50"
+          } ${isToday ? "bg-brand/5 border-brand/20" : ""} ${isSelected ? "ring-2 ring-brand ring-inset z-10" : ""}`}
         >
           <div className="flex justify-between items-start mb-2">
-            <span className={`text-sm font-bold ${isSameDay(day, new Date()) ? "text-brand" : "text-muted-foreground"}`}>
+            <span className={`text-sm md:text-base font-bold ${isToday ? "text-brand" : "text-muted-foreground"}`}>
               {format(day, "d")}
             </span>
             <button
@@ -187,12 +246,12 @@ export default function Calendar() {
                 setInitialDueDate(format(day, "yyyy-MM-dd"));
                 setIsModalOpen(true);
               }}
-              className="hidden md:flex opacity-0 group-hover:opacity-100 p-1 rounded-lg hover:bg-brand hover:text-white transition-all"
+              className="hidden md:flex opacity-0 group-hover:opacity-100 p-1.5 rounded-xl hover:bg-brand hover:text-white transition-all bg-muted/50"
             >
-              <Plus className="w-3 h-3" />
+              <Plus className="w-4 h-4" />
             </button>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5 flex-1 overflow-hidden">
             {dayTodos.map((todo) => (
               <div
                 key={todo.id}
@@ -200,14 +259,14 @@ export default function Calendar() {
                   e.stopPropagation();
                   setSelectedDay(day);
                 }}
-                className={`text-[8px] md:text-[10px] px-1 md:px-2 py-0.5 md:py-1 rounded-md md:rounded-md line-clamp-1 font-bold truncate transition-all ${todo.isCompleted
-                  ? "bg-muted text-muted-foreground line-through opacity-60"
-                  : "premium-shadow hover:scale-[1.02]"
-                  }`}
+                className={`calendar-task-snippet text-[9px] md:text-[11px] px-2 py-1 md:py-1.5 rounded-lg line-clamp-1 font-bold truncate transition-all ${
+                  todo.isCompleted
+                  ? "bg-muted text-muted-foreground line-through opacity-80"
+                  : "premium-shadow hover:scale-[1.03] active:scale-95"
+                }`}
                 style={{
-                  backgroundColor: !todo.isCompleted ? (todo.color ? `${todo.color}20` : todo.group?.color ? `${todo.group.color}20` : "var(--color-brand-20)") : undefined,
-                  color: !todo.isCompleted ? (todo.color || todo.group?.color || "var(--color-brand)") : undefined,
-                  borderLeft: !todo.isCompleted ? `3px solid ${todo.color || todo.group?.color || "var(--color-brand)"}` : undefined
+                  backgroundColor: !todo.isCompleted ? (todo.color || todo.group?.color || "var(--color-brand)") : undefined,
+                  color: !todo.isCompleted ? "white" : undefined,
                 }}
               >
                 {todo.title}
@@ -217,9 +276,9 @@ export default function Calendar() {
         </div>
       );
 
-      if ((i + 1) % 7 === 0) {
+      if ((i + 1) % 7 === 0 || i === calendarDays.length - 1) {
         rows.push(
-          <div className="grid grid-cols-7" key={day.toString()}>
+          <div className={`grid grid-cols-7 ${viewMode === "week" ? "flex-1" : ""}`} key={`row-${i}`}>
             {days}
           </div>
         );
@@ -227,7 +286,11 @@ export default function Calendar() {
       }
     });
 
-    return <div className="rounded-xl md:rounded-3xl overflow-hidden border border-border/40 premium-shadow">{rows}</div>;
+    return (
+      <div className={`calendar-grid rounded-xl md:rounded-[2.5rem] overflow-hidden border border-border/40 premium-shadow bg-background flex flex-col ${viewMode === "week" ? "min-h-[300px]" : ""}`}>
+        {rows}
+      </div>
+    );
   };
 
   const renderDayDetail = () => {
@@ -237,11 +300,11 @@ export default function Calendar() {
 
     return createPortal(
       <div 
-        className="fixed inset-0 z-[50] flex flex-col items-center justify-center md:justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
+        className="modal-overlay fixed inset-0 z-[50] flex flex-col items-center justify-center md:justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300"
         onClick={() => setSelectedDay(null)}
       >
         <div 
-          className="w-full max-w-md bg-white dark:bg-background rounded-[2rem] p-6 premium-shadow animate-in slide-in-from-bottom-8 md:zoom-in-95 duration-300 flex flex-col max-h-[85vh]"
+          className="modal-container w-full max-w-md bg-white dark:bg-background rounded-[2rem] p-6 premium-shadow animate-in slide-in-from-bottom-8 md:zoom-in-95 duration-300 flex flex-col max-h-[85vh]"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex justify-between items-start mb-6 shrink-0">
@@ -282,7 +345,7 @@ export default function Calendar() {
             </button>
           </div>
 
-          <div className="space-y-3 mb-6 overflow-y-auto pr-1 -mr-1 
+          <div className="space-y-3 mb-6 overflow-y-auto pr-1 -mr-1 pb-20
             [&::-webkit-scrollbar]:w-1.5
             [&::-webkit-scrollbar-thumb]:bg-border
             [&::-webkit-scrollbar-thumb]:rounded-full"
@@ -294,7 +357,8 @@ export default function Calendar() {
                 <div
                   key={todo.id}
                   onClick={(e) => toggleTodoStatus(todo.id, todo.isCompleted, e)}
-                  className="flex items-center gap-4 p-4 rounded-2xl bg-muted/30 hover:bg-muted/50 transition-all cursor-pointer group"
+                  className="task-item group relative flex items-center gap-4 p-4 rounded-2xl bg-white border border-border/50 hover:bg-zinc-50 transition-all cursor-pointer border-l-8"
+                  style={{ borderLeftColor: !todo.isCompleted ? (todo.color || todo.group?.color || "var(--color-brand)") : 'transparent' }}
                 >
                   <button
                     className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${todo.isCompleted
@@ -311,7 +375,7 @@ export default function Calendar() {
                     style={{ backgroundColor: todo.color || todo.group?.color || "var(--color-brand)" }}
                   />
 
-                  <div className={`flex-1 flex flex-col transition-all overflow-hidden ${todo.isCompleted ? "opacity-60" : ""}`}>
+                  <div className={`flex-1 flex flex-col transition-all ${todo.isCompleted ? "opacity-60" : ""}`}>
                     <span className={`font-medium ${todo.isCompleted ? "line-through text-muted-foreground" : ""}`}>
                       {todo.title}
                     </span>
@@ -326,7 +390,7 @@ export default function Calendar() {
                     {todo.group?.name}
                   </span>
 
-                  <div className="relative shrink-0">
+                  <div className={`relative shrink-0 ${openDropdownId === todo.id ? "z-30" : "z-0"}`}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -338,7 +402,7 @@ export default function Calendar() {
                     </button>
 
                     {openDropdownId === todo.id && (
-                      <div className="absolute right-0 top-full mt-1 w-48 rounded-2xl bg-popover border border-border premium-shadow overflow-hidden z-[100] animate-in fade-in zoom-in-95 duration-200">
+                      <div className="absolute right-0 top-full mt-1 w-48 rounded-2xl bg-white border border-border shadow-2xl z-[100] animate-in fade-in zoom-in-95 duration-200">
                         <div className="p-1">
                           <button
                             onClick={(e) => {
@@ -347,14 +411,14 @@ export default function Calendar() {
                               setTaskToEdit({ ...todo, groupId: todo.group?.id });
                               setIsModalOpen(true);
                             }}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-muted rounded-xl transition-colors"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-100 rounded-xl transition-colors"
                           >
                             <Edit className="w-4 h-4" />
                             Modifier
                           </button>
                           <button
                             onClick={(e) => deleteTodo(todo.id, e)}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 rounded-xl transition-colors mt-1"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors mt-1"
                           >
                             <Trash className="w-4 h-4" />
                             Supprimer
@@ -391,7 +455,7 @@ export default function Calendar() {
   };
 
   return (
-    <div className="animate-in">
+    <div className="calendar-container animate-in">
       {renderHeader()}
       {renderDays()}
       {renderCells()}
